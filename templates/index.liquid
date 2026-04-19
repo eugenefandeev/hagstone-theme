@@ -1,0 +1,596 @@
+`assets/base.css` создан. Отлично, идём дальше.
+
+---
+
+## ФАЙЛ 3 из 4 — Главная страница
+
+Нажми **"Add file"** → **"Create new file"**
+
+В поле **"Name your file"** введи точно:
+```
+templates/index.liquid
+```
+
+Вставь весь код ниже:
+
+```liquid
+<!-- ============================================================
+     HAGSTONE.FR — HOMEPAGE
+     7 sections: Lottery, Manifesto, Heritage, Gallery,
+     Matchmaker, Commission, Awakening, Portal, Atlas
+============================================================ -->
+
+<!-- ============================================================
+     SECTION 1 — THE DAILY RESONANCE
+     Left: today's artifact + countdown + email form
+     Right: scrollable archive of past draws
+============================================================ -->
+<section id="daily-resonance"
+         class="site-section"
+         aria-label="Daily Artifact Draw">
+  <div class="content-wrap">
+
+    <span class="section-label">Daily Draw</span>
+
+    <div class="lottery-grid">
+
+      <!-- LEFT: Today's artifact -->
+      <div class="lottery-left">
+
+        <h2 class="section-title">Today's Artifact</h2>
+
+        {% assign lottery_product = collections['lottery-today'].products.first %}
+        {% if lottery_product %}
+          <img
+            src="{{ lottery_product.featured_image | img_url: 'master' }}"
+            alt="{{ lottery_product.title | escape }}"
+            class="lottery-artifact-image fade-in">
+          <p class="artifact-name">{{ lottery_product.title }}</p>
+          {% if lottery_product.metafields.custom.height_cm.value %}
+            <p class="artifact-dims">
+              {{ lottery_product.metafields.custom.height_cm.value }} cm
+              · {{ lottery_product.metafields.custom.weight_g.value }} g
+            </p>
+          {% endif %}
+        {% else %}
+          <!-- Placeholder when no lottery product is set -->
+          <div style="height: 300px; border: 1px solid #E0E0E0;
+                      display: flex; align-items: center;
+                      justify-content: center; opacity: 0.3;">
+            <span style="font-size: 0.7rem; letter-spacing: 0.2em;">
+              ARTIFACT TO BE REVEALED
+            </span>
+          </div>
+        {% endif %}
+
+        <!-- Countdown timer -->
+        <div class="lottery-timer" style="margin-top: 2rem;">
+          <span class="timer-label">Next draw in</span>
+          <span class="timer-countdown" id="countdown">--:--:--</span>
+        </div>
+
+        <!-- Email entry form -->
+        <form class="lottery-form"
+              action="/contact#contact_form"
+              method="post"
+              id="lottery-form">
+          <input type="hidden" name="form_type" value="customer">
+          <input type="hidden" name="utf8" value="✓">
+          <input
+            type="email"
+            name="contact[email]"
+            class="field-input"
+            placeholder="Your email — enter the draw"
+            required
+            aria-label="Email address for lottery entry">
+          <button type="submit" class="btn-ghost">
+            [ Enter ]
+          </button>
+        </form>
+
+      </div>
+
+      <!-- RIGHT: Archive of past draws -->
+      <div class="lottery-right">
+
+        <h3 class="section-title" style="font-size: 0.8rem;">
+          Archive
+        </h3>
+
+        <ul class="archive-list" aria-label="Past artifact draws">
+          {% for entry in shop.metaobjects.lottery_archive.values limit: 20 %}
+            <li class="archive-item">
+              {% if entry.artifact_image.value %}
+                <img
+                  src="{{ entry.artifact_image.value | img_url: '80x80' }}"
+                  alt="{{ entry.artifact_title.value }}"
+                  class="archive-thumb">
+              {% else %}
+                <div class="archive-thumb"
+                     style="background: #F0F0F0;"></div>
+              {% endif %}
+              <span class="archive-name">
+                {{ entry.artifact_title.value }}
+              </span>
+              <span class="archive-city">
+                → {{ entry.winner_city.value }},
+                {{ entry.winner_country.value }}<br>
+                <span style="opacity: 0.4; font-size: 0.6rem;">
+                  {{ entry.draw_date.value | date: '%b %d' }}
+                </span>
+              </span>
+            </li>
+          {% else %}
+            <!-- Placeholder items before first real draws -->
+            <li class="archive-item">
+              <div class="archive-thumb" style="background: #F0F0F0;"></div>
+              <span class="archive-name">Stone #001</span>
+              <span class="archive-city">→ New York, USA</span>
+            </li>
+            <li class="archive-item">
+              <div class="archive-thumb" style="background: #F0F0F0;"></div>
+              <span class="archive-name">Stone #002</span>
+              <span class="archive-city">→ Tokyo, Japan</span>
+            </li>
+            <li class="archive-item">
+              <div class="archive-thumb" style="background: #F0F0F0;"></div>
+              <span class="archive-name">Stone #003</span>
+              <span class="archive-city">→ London, UK</span>
+            </li>
+            <li class="archive-item">
+              <div class="archive-thumb" style="background: #F0F0F0;"></div>
+              <span class="archive-name">Stone #004</span>
+              <span class="archive-city">→ Berlin, Germany</span>
+            </li>
+            <li class="archive-item">
+              <div class="archive-thumb" style="background: #F0F0F0;"></div>
+              <span class="archive-name">Stone #005</span>
+              <span class="archive-city">→ Sydney, Australia</span>
+            </li>
+          {% endfor %}
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 2 — THE DEEP TIME MANIFESTO
+============================================================ -->
+<section id="deep-time-manifesto"
+         class="site-section section--centered"
+         aria-label="Deep Time Manifesto">
+  <div class="content-wrap">
+
+    <span class="section-label">The Manifesto</span>
+
+    <h2 class="section-title fade-in">
+      Before Words Were Spoken
+    </h2>
+
+    <p class="section-body fade-in">
+      A hagstone is not merely a geological anomaly; it is a physical
+      anchor to Deep Time. Before words were spoken, before temples were
+      built and sacred texts written, there was the stone. This natural
+      portal has accompanied the human species for over two million years
+      of evolution. Carved by the abrasive tides of the Atlantic, it is
+      the ocean's ultimate sculpture and the original manuport.
+    </p>
+
+    <!-- Geological data points -->
+    <div class="data-grid fade-in">
+      <div>
+        <span class="data-label">Geological Age</span>
+        <span class="data-value">60–95 million years</span>
+      </div>
+      <div>
+        <span class="data-label">Formation</span>
+        <span class="data-value">Late Cretaceous</span>
+      </div>
+      <div>
+        <span class="data-label">Origin</span>
+        <span class="data-value">Atlantic seabed</span>
+      </div>
+      <div>
+        <span class="data-label">Human Bond</span>
+        <span class="data-value">2+ million years</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 3 — THE HERITAGE ARCHIVE
+============================================================ -->
+<section id="heritage-archive"
+         class="site-section"
+         aria-label="Heritage Archive">
+  <div class="content-wrap">
+    <div class="two-col" style="align-items: center;">
+
+      <div>
+        <span class="section-label">The Archive</span>
+        <h2 class="section-title fade-in">
+          The Normandie Archive:<br>Since 1928
+        </h2>
+        <p class="section-body fade-in">
+          For nearly a century, our curators have walked the unforgiving
+          shores of the Normandie coast, France. We do not manufacture
+          these artifacts; we recover them. Since 1928, our family has
+          preserved the rarest specimens shaped by water and wind. Each
+          piece in our gallery is an absolute singularity — never to be
+          replicated by man or nature.
+        </p>
+      </div>
+
+      <!-- Normandie image — upload to Shopify Files as normandie.jpg -->
+      <div class="fade-in">
+        {% assign normandie_img = 'normandie.jpg' | asset_url %}
+        <img src="{{ normandie_img }}"
+             alt="Normandie coastline — hagstone collection site"
+             style="width: 100%; height: auto; object-fit: cover;
+                    filter: grayscale(20%);">
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 4 — THE ABSOLUTE GEOMETRY
+     Masonry grid — artifacts at relative scale
+============================================================ -->
+<section id="absolute-geometry"
+         class="site-section"
+         aria-label="Artifact Gallery">
+  <div class="content-wrap">
+
+    <span class="section-label">The Collection</span>
+    <h2 class="section-title fade-in">The Archive</h2>
+    <p class="section-body fade-in"
+       style="margin-bottom: 3rem; opacity: 0.5; font-size: 0.8rem;">
+      Artifacts displayed at relative scale. Dimensions are exact.
+      Each piece is a singularity.
+    </p>
+
+    <div class="artifact-grid">
+      {% for product in collections.all.products limit: 200 %}
+
+        {% assign h = product.metafields.custom.height_cm.value
+                      | default: 25 | plus: 0 %}
+        {% assign scale = h | divided_by: 25.0 %}
+
+        <a href="{{ product.url }}"
+           class="artifact-card fade-in"
+           aria-label="{{ product.title }}">
+
+          <div class="artifact-image-wrap">
+
+            <!-- Clean image (no hand) — shown by default -->
+            {% if product.images[1] %}
+              <img
+                src="{{ product.images[1] | img_url: 'master' }}"
+                alt="{{ product.title | escape }} — artifact"
+                class="artifact-image-clean"
+                style="transform: scale({{ scale }});
+                       transform-origin: bottom center;"
+                loading="lazy"
+                width="{{ product.images[1].width }}"
+                height="{{ product.images[1].height }}">
+            {% else %}
+              <img
+                src="{{ product.featured_image | img_url: 'master' }}"
+                alt="{{ product.title | escape }}"
+                class="artifact-image-clean"
+                style="transform: scale({{ scale }});
+                       transform-origin: bottom center;"
+                loading="lazy">
+            {% endif %}
+
+            <!-- Hand image — shown on hover -->
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | img_url: 'master' }}"
+                alt="{{ product.title | escape }} — in hand"
+                class="artifact-image-hand"
+                loading="lazy">
+            {% endif %}
+
+          </div>
+
+          <div class="artifact-meta">
+            <span class="artifact-number">
+              #{{ product.metafields.custom.stone_number.value
+                  | default: forloop.index
+                  | prepend: '00'
+                  | slice: -3, 3 }}
+            </span>
+            <span class="artifact-name">{{ product.title }}</span>
+            {% if product.metafields.custom.height_cm.value %}
+              <span class="artifact-dims">
+                {{ product.metafields.custom.height_cm.value }} cm
+                · {{ product.metafields.custom.weight_g.value }} g
+              </span>
+            {% endif %}
+            <span class="artifact-price">
+              {{ product.price | money }}
+            </span>
+          </div>
+
+        </a>
+
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 5 — THE MATCHMAKER
+============================================================ -->
+<section id="matchmaker"
+         class="site-section section--centered"
+         aria-label="Artifact Matchmaker">
+  <div class="content-wrap">
+
+    <span class="section-label">The Matchmaker</span>
+    <h2 class="section-title fade-in">Find Your Anchor</h2>
+    <p class="section-body fade-in">
+      To every acquired artifact, our curators append a Catalyst —
+      a virgin fragment of Normandie flint to amplify the resonance
+      of your primary artifact.
+    </p>
+    <p class="section-body fade-in"
+       style="margin-top: 1rem; opacity: 0.5; font-size: 0.8rem;">
+      Describe what you seek. Our curators will identify the artifact
+      that corresponds to your resonance.
+    </p>
+
+    <div style="margin-top: 3rem;">
+      <a href="/collections/all" class="btn-ghost fade-in">
+        [ Initiate Search ]
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 6 — THE COMMISSION
+============================================================ -->
+<section id="commission"
+         class="site-section"
+         aria-label="Bespoke Commission">
+  <div class="content-wrap"
+       style="max-width: 680px; margin: 0 auto; text-align: center;">
+
+    <span class="section-label">The Commission</span>
+    <h2 class="section-title fade-in">For the Absolute Purist</h2>
+    <p class="section-body fade-in" style="margin: 0 auto 3rem;">
+      Commission our curators to extract a specific artifact from the
+      Atlantic tides. Describe the geometry of your ideal stone — its
+      weight, its aperture, its surface. We will walk the shore until
+      we find it.
+    </p>
+
+    <a href="/pages/commission" class="btn-ghost fade-in">
+      [ Commission an Artifact ]
+    </a>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 7 — THE AWAKENING
+     Dark section for visual contrast
+============================================================ -->
+<section id="awakening"
+         class="site-section section--dark"
+         aria-label="The Awakening Ritual">
+  <div class="content-wrap">
+
+    <span class="section-label"
+          style="color: #FAFAFA; opacity: 0.4;">
+      The Awakening
+    </span>
+
+    <h2 class="section-title fade-in">
+      Maximum Amplitude
+    </h2>
+
+    <p class="section-body fade-in"
+       style="color: #FAFAFA; opacity: 0.75; margin-bottom: 3rem;">
+      Placed within a Megahagstone on the Normandie shore, your artifact
+      absorbs the maximum amplitude of the elements — from dawn to dusk,
+      from the lowest ebb to the highest tide. This is not ceremony.
+      This is geology in real time.
+    </p>
+
+    <!-- Tidal data -->
+    <div class="data-grid fade-in" style="border-color: #333;">
+      <div>
+        <span class="data-label" style="color: #FAFAFA;">Duration</span>
+        <span class="data-value" style="color: #FAFAFA;">
+          Full tidal cycle — ~12.5 hours
+        </span>
+      </div>
+      <div>
+        <span class="data-label" style="color: #FAFAFA;">Location</span>
+        <span class="data-value" style="color: #FAFAFA;">
+          Normandie coast, France
+        </span>
+      </div>
+      <div>
+        <span class="data-label" style="color: #FAFAFA;">Amplitude</span>
+        <span class="data-value" style="color: #FAFAFA;">
+          Up to 14 metres tidal range
+        </span>
+      </div>
+      <div>
+        <span class="data-label" style="color: #FAFAFA;">Cost</span>
+        <span class="data-value" style="color: #FAFAFA;">+ $150</span>
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem;">
+      <a href="/products/the-awakening"
+         class="btn-ghost btn-ghost--inverted fade-in">
+        [ Add the Awakening to Your Order ]
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SECTION 8 — THE ZEROMALIST PORTAL
+     Intentionally appears empty — link revealed on hover
+============================================================ -->
+<section id="zeromalist-portal"
+         class="site-section portal-section"
+         aria-label="Zeromalist Portal">
+
+  <!-- This section intentionally appears empty.
+       The link is revealed on hover only. -->
+  <p class="portal-text">
+    For the adherents of absolute emptiness.
+  </p>
+
+  <a href="/products/zeromalist-stone"
+     class="portal-link"
+     aria-label="Access the Zeromalist artifact">
+    [ Access ]
+  </a>
+
+</section>
+
+<!-- ============================================================
+     SECTION 9 — THE HERITAGE ATLAS
+     World map — shipped artifact destinations
+============================================================ -->
+<section id="heritage-atlas"
+         class="site-section"
+         aria-label="Heritage Atlas — Artifacts in the World">
+  <div class="content-wrap" style="margin-bottom: 2rem;">
+    <span class="section-label">The Atlas</span>
+    <h2 class="section-title fade-in">
+      Heritage Atlas
+    </h2>
+    <p class="section-body fade-in"
+       style="opacity: 0.5; font-size: 0.8rem;">
+      Each mark is an artifact in the world.
+    </p>
+  </div>
+
+  <div id="world-map"
+       role="img"
+       aria-label="World map showing artifact destinations">
+  </div>
+
+  <!-- Leaflet.js map initialization -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+      var map = L.map('world-map', {
+        center: [30, 0],
+        zoom: 2,
+        zoomControl: false,
+        attributionControl: false,
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        { maxZoom: 19 }
+      ).addTo(map);
+
+      // Shipped destinations
+      // Replace with dynamic data from Shopify metaobjects in production
+      var destinations = [
+        { coords: [40.7128, -74.0060], city: "New York, USA" },
+        { coords: [34.0522, -118.2437], city: "Los Angeles, USA" },
+        { coords: [43.6532, -79.3832], city: "Toronto, Canada" },
+        { coords: [51.5074, -0.1278], city: "London, UK" },
+        { coords: [48.8566, 2.3522], city: "Paris, France" },
+        { coords: [52.5200, 13.4050], city: "Berlin, Germany" },
+        { coords: [35.6762, 139.6503], city: "Tokyo, Japan" },
+        { coords: [-33.8688, 151.2093], city: "Sydney, Australia" },
+        { coords: [1.3521, 103.8198], city: "Singapore" },
+        { coords: [55.7558, 37.6173], city: "Moscow, Russia" }
+      ];
+
+      destinations.forEach(function(d) {
+        L.circleMarker(d.coords, {
+          radius: 4,
+          fillColor: '#111111',
+          color: 'none',
+          fillOpacity: 0.75
+        })
+        .bindTooltip(d.city, {
+          className: 'map-tooltip',
+          direction: 'top',
+          offset: [0, -6]
+        })
+        .addTo(map);
+      });
+
+    });
+  </script>
+
+</section>
+
+<!-- ============================================================
+     FADE-IN ON SCROLL — IntersectionObserver
+============================================================ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(function(el) {
+      observer.observe(el);
+    });
+  });
+</script>
+
+<!-- ============================================================
+     COUNTDOWN TIMER — draws at 20:00 CET (19:00 UTC)
+============================================================ -->
+<script>
+  function updateCountdown() {
+    var now = new Date();
+    var draw = new Date();
+    draw.setUTCHours(19, 0, 0, 0);
+    if (now >= draw) {
+      draw.setDate(draw.getDate() + 1);
+    }
+    var diff = draw - now;
+    var h = Math.floor(diff / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+
+    var el = document.getElementById('countdown');
+    if (el) {
+      el.textContent =
+        String(h).padStart(2,'0') + ':' +
+        String(m).padStart(2,'0') + ':' +
+        String(s).padStart(2,'0');
+    }
+  }
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
+```
+
+---
+
+Нажми **"Commit changes"** и пришли скрин. Остался последний файл — страница каждого камня `templates/product.liquid`.
