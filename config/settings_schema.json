@@ -1,0 +1,27 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Hagstone",
+    "theme_version": "1.0.0",
+    "theme_author": "Hagstone",
+    "theme_documentation_url": "https://hagstone.fr",
+    "theme_support_url": "https://hagstone.fr"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Background color",
+        "default": "#FAFAFA"
+      },
+      {
+        "type": "color",
+        "id": "text_color",
+        "label": "Text color",
+        "default": "#111111"
+      }
+    ]
+  }
+]
