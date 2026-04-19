@@ -1,0 +1,361 @@
+Отлично, три файла готовы. Последний.
+
+---
+
+## ФАЙЛ 4 из 4 — Страница камня
+
+Нажми **"Add file"** → **"Create new file"**
+
+В поле **"Name your file"** введи точно:
+```
+templates/product.liquid
+```
+
+Вставь весь код ниже:
+
+```liquid
+<!-- ============================================================
+     HAGSTONE.FR — PRODUCT PAGE
+     Individual artifact page with video, specs, acquire form
+============================================================ -->
+
+<!-- Schema.org structured data for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | truncate: 300 | json }},
+  "image": {{ product.featured_image | img_url: 'master' | json }},
+  "brand": {
+    "@type": "Brand",
+    "name": "Hagstone"
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": {{ shop.url | append: product.url | json }},
+    "price": {{ product.price | money_without_currency | json }},
+    "priceCurrency": {{ shop.currency | json }},
+    "availability": "{% if product.available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "seller": {
+      "@type": "Organization",
+      "name": "Hagstone"
+    }
+  }
+}
+</script>
+
+<div class="product-layout">
+
+  <!-- ============================================================
+       LEFT COLUMN — Media (video or image)
+  ============================================================ -->
+  <div class="product-media">
+
+    {% if product.metafields.custom.video_url.value != blank %}
+
+      <!-- Autoplay looping video — hand rotation -->
+      <video
+        autoplay
+        loop
+        muted
+        playsinline
+        aria-label="{{ product.title }} — artifact video">
+        <source
+          src="{{ product.metafields.custom.video_url.value }}"
+          type="video/mp4">
+        <!-- Fallback if video fails to load -->
+        <img
+          src="{{ product.featured_image | img_url: 'master' }}"
+          alt="{{ product.title | escape }}">
+      </video>
+
+    {% else %}
+
+      <!-- Static image if no video uploaded yet -->
+      <img
+        src="{{ product.featured_image | img_url: 'master' }}"
+        alt="{{ product.title | escape }}"
+        loading="eager">
+
+    {% endif %}
+
+    <!-- Secondary images below video -->
+    {% if product.images.size > 1 %}
+      <div style="display: grid;
+                  grid-template-columns: repeat(3, 1fr);
+                  gap: 0.5rem;
+                  margin-top: 1rem;">
+        {% for image in product.images limit: 3 %}
+          <img
+            src="{{ image | img_url: '400x400' }}"
+            alt="{{ product.title | escape }} — view {{ forloop.index }}"
+            style="width: 100%; mix-blend-mode: multiply; cursor: pointer;"
+            loading="lazy">
+        {% endfor %}
+      </div>
+    {% endif %}
+
+  </div>
+
+  <!-- ============================================================
+       RIGHT COLUMN — Info, specs, purchase
+  ============================================================ -->
+  <div class="product-info">
+
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb"
+         style="margin-bottom: 1.5rem;">
+      <a href="/collections/all"
+         style="font-size: 0.65rem;
+                letter-spacing: 0.2em;
+                opacity: 0.4;
+                text-transform: uppercase;">
+        ← Archive
+      </a>
+    </nav>
+
+    <!-- Stone number -->
+    {% if product.metafields.custom.stone_number.value %}
+      <span style="font-size: 0.65rem;
+                   letter-spacing: 0.3em;
+                   opacity: 0.3;
+                   text-transform: uppercase;
+                   display: block;
+                   margin-bottom: 0.5rem;">
+        #{{ product.metafields.custom.stone_number.value
+            | prepend: '00' | slice: -3, 3 }}
+        · Normandie Coast
+      </span>
+    {% endif %}
+
+    <!-- Title -->
+    <h1 class="product-title">{{ product.title }}</h1>
+
+    <!-- Price -->
+    <p class="product-price" id="display-price">
+      {{ product.price | money }}
+    </p>
+
+    <!-- Description -->
+    {% if product.description != blank %}
+      <div class="product-description">
+        {{ product.description }}
+      </div>
+    {% endif %}
+
+    <!-- Artifact specifications -->
+    <dl class="artifact-specs">
+
+      {% if product.metafields.custom.height_cm.value %}
+        <dt class="spec-label">Height</dt>
+        <dd class="spec-value">
+          {{ product.metafields.custom.height_cm.value }} cm
+        </dd>
+      {% endif %}
+
+      {% if product.metafields.custom.weight_g.value %}
+        <dt class="spec-label">Weight</dt>
+        <dd class="spec-value">
+          {{ product.metafields.custom.weight_g.value }} g
+        </dd>
+      {% endif %}
+
+      {% if product.metafields.custom.aperture_mm.value %}
+        <dt class="spec-label">Aperture</dt>
+        <dd class="spec-value">
+          {{ product.metafields.custom.aperture_mm.value }} mm
+        </dd>
+      {% endif %}
+
+      {% if product.metafields.custom.geological_age.value %}
+        <dt class="spec-label">Geological Age</dt>
+        <dd class="spec-value">
+          ~{{ product.metafields.custom.geological_age.value }}
+          million years
+        </dd>
+      {% endif %}
+
+      {% if product.metafields.custom.coordinates.value %}
+        <dt class="spec-label">Origin</dt>
+        <dd class="spec-value">
+          {{ product.metafields.custom.coordinates.value }}<br>
+          <span style="opacity: 0.5; font-size: 0.65rem;">
+            Normandie, France
+          </span>
+        </dd>
+      {% endif %}
+
+      <dt class="spec-label">Collected</dt>
+      <dd class="spec-value">
+        {{ product.created_at | date: '%B %Y' }}
+      </dd>
+
+      <dt class="spec-label">Availability</dt>
+      <dd class="spec-value">
+        {% if product.available %}
+          One — this artifact only
+        {% else %}
+          <span style="opacity: 0.4;">Acquired</span>
+        {% endif %}
+      </dd>
+
+    </dl>
+
+    <!-- ============================================================
+         PURCHASE FORM
+    ============================================================ -->
+    {% if product.available %}
+
+      <form action="/cart/add"
+            method="post"
+            id="add-to-cart-form"
+            style="margin-top: 2rem;">
+
+        <input type="hidden"
+               name="id"
+               value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden"
+               name="quantity"
+               value="1">
+
+        <!-- Awakening ritual upsell -->
+        <div class="upsell-block">
+          <label class="upsell-label" for="awakening-upsell">
+            <input
+              type="checkbox"
+              id="awakening-upsell"
+              name="properties[The Awakening Ritual]"
+              value="requested"
+              data-price="15000">
+            <span>[ + $150 ] Add The Awakening Ritual</span>
+          </label>
+          <p class="upsell-description">
+            Your artifact will spend a full tidal cycle on the Normandie
+            shore — from dawn to dusk, from lowest ebb to highest tide —
+            before dispatch.
+          </p>
+        </div>
+
+        <!-- Acquire button -->
+        <button type="submit"
+                class="btn-acquire"
+                id="acquire-btn">
+          [ Acquire Artifact ]
+        </button>
+
+      </form>
+
+      <!-- Shipping note -->
+      <p class="shipping-note">
+        Dispatched from Normandie, France within 3–5 days.<br>
+        United States & Canada — approximately 10 days.<br>
+        Tracked worldwide via Delivengo.
+      </p>
+
+    {% else %}
+
+      <!-- Sold state -->
+      <div style="margin-top: 2rem;
+                  padding: 1.5rem;
+                  border: 1px solid #E0E0E0;
+                  text-align: center;">
+        <p style="font-size: 0.75rem;
+                  letter-spacing: 0.2em;
+                  text-transform: uppercase;
+                  opacity: 0.4;">
+          This artifact has been acquired.
+        </p>
+        <a href="/collections/all"
+           class="btn-ghost"
+           style="margin-top: 1.5rem; display: inline-flex;">
+          [ View Archive ]
+        </a>
+      </div>
+
+    {% endif %}
+
+    <!-- Zeromalism link -->
+    <div style="margin-top: 3rem;
+                padding-top: 2rem;
+                border-top: 1px solid #E0E0E0;">
+      <p style="font-size: 0.65rem;
+                letter-spacing: 0.15em;
+                opacity: 0.35;
+                line-height: 1.8;">
+        This artifact belongs to the Zeromalism philosophy —
+        the supremacy of emptiness and geological time.<br>
+        <a href="https://zeromalism.org"
+           target="_blank"
+           rel="noopener"
+           style="border-bottom: 1px solid currentColor;
+                  padding-bottom: 0.1rem;">
+          Learn more at zeromalism.org ↗
+        </a>
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     UPSELL PRICE UPDATER — vanilla JS
+============================================================ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var checkbox   = document.getElementById('awakening-upsell');
+    var btn        = document.getElementById('acquire-btn');
+    var priceEl    = document.getElementById('display-price');
+    var basePrice  = {{ product.price }};
+    var addPrice   = 15000; // $150.00 in cents
+
+    if (!checkbox) return;
+
+    checkbox.addEventListener('change', function() {
+      var total = this.checked ? basePrice + addPrice : basePrice;
+
+      // Format as currency
+      var formatted = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: '{{ shop.currency }}',
+        minimumFractionDigits: 0
+      }).format(total / 100);
+
+      // Update button text
+      btn.textContent = this.checked
+        ? '[ Acquire Artifact — ' + formatted + ' ]'
+        : '[ Acquire Artifact ]';
+
+      // Update displayed price
+      if (priceEl) {
+        priceEl.textContent = formatted;
+      }
+    });
+  });
+</script>
+
+<!-- ============================================================
+     FADE-IN on product page
+============================================================ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(function(el) {
+      observer.observe(el);
+    });
+  });
+</script>
+```
+
+---
+
+Нажми **"Commit changes"** и пришли скрин.
+
+Все 4 файла будут готовы. Следующий шаг — подключим репозиторий к Shopify и увидим сайт живым.
