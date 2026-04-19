@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Shopify required hook -->
+  {{ content_for_header }}
+
+  <!-- Page title -->
+  <title>
+    {% if page_title == blank %}
+      Hagstone — Artifacts of Deep Time — Normandie Coast
+    {% else %}
+      {{ page_title }} — Hagstone
+    {% endif %}
+  </title>
+
+  <!-- Meta description -->
+  <meta name="description" content="{% if page_description %}{{ page_description | escape }}{% else %}Authentic hagstones from the Normandie coast. Geological artifacts collected since 1928. Each piece is an absolute singularity.{% endif %}">
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Hagstone">
+  <meta property="og:title" content="{% if page_title %}{{ page_title | escape }}{% else %}Hagstone — Artifacts of Deep Time{% endif %}">
+  <meta property="og:description" content="{% if page_description %}{{ page_description | escape }}{% else %}Authentic hagstones from the Normandie coast. Geological artifacts collected since 1928.{% endif %}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:type" content="website">
+  {% if page.image %}
+    <meta property="og:image" content="{{ page.image | img_url: 'master' }}">
+  {% else %}
+    <meta property="og:image" content="{{ 'og-default.jpg' | asset_url }}">
+  {% endif %}
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% if page_title %}{{ page_title | escape }}{% else %}Hagstone — Artifacts of Deep Time{% endif %}">
+  <meta name="twitter:description" content="{% if page_description %}{{ page_description | escape }}{% else %}Authentic hagstones from the Normandie coast.{% endif %}">
+  <meta name="twitter:image" content="{% if page.image %}{{ page.image | img_url: 'master' }}{% else %}{{ 'og-default.jpg' | asset_url }}{% endif %}">
+
+  <!-- Organization Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Hagstone",
+    "url": "https://hagstone.fr",
+    "description": "Authentic hagstones from the Normandie coast of France. Geological artifacts collected since 1928.",
+    "foundingDate": "1928",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "FR",
+      "addressRegion": "Normandie"
+    },
+    "sameAs": [
+      "https://www.instagram.com/hagstone.fr"
+    ]
+  }
+  </script>
+
+  <!-- PLACEHOLDER: Google Tag Manager (head snippet) -->
+  <!-- PLACEHOLDER: Consent Management Platform -->
+
+  <!-- Leaflet.js CSS for world map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <!-- Theme stylesheet -->
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+
+</head>
+
+<body>
+
+  <!-- PLACEHOLDER: Google Tag Manager (body noscript) -->
+
+  <!-- ============================================================
+       HEADER
+       Sticky navigation — logo left, nav right
+       Mobile: hamburger toggles full-screen overlay
+  ============================================================ -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+
+      <!-- Logo -->
+      <a href="/" class="header-logo" aria-label="Hagstone — Return to homepage">
+        <span class="logo-primary">HAGSTONE</span>
+        <span class="logo-sub">NORMANDIE · EST. 1928</span>
+      </a>
+
+      <!-- Desktop navigation -->
+      <nav class="header-nav" role="navigation" aria-label="Main navigation">
+        <a href="/collections/all" class="nav-link">ARCHIVE</a>
+        <a href="/pages/commission" class="nav-link">COMMISSION</a>
+        <a href="/pages/about" class="nav-link">MANIFESTO</a>
+        <a href="https://zeromalism.org" class="nav-link nav-link--external"
+           target="_blank" rel="noopener" aria-label="Zeromalism — opens in new tab">
+          ZEROMALISM ↗
+        </a>
+      </nav>
+
+      <!-- Mobile hamburger — pure CSS, no JavaScript -->
+      <input type="checkbox" id="nav-toggle" class="nav-toggle-input"
+             aria-label="Toggle navigation">
+      <label for="nav-toggle" class="nav-toggle-label" aria-hidden="true">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </label>
+
+      <!-- Mobile navigation overlay -->
+      <nav class="mobile-nav" role="navigation" aria-label="Mobile navigation">
+        <a href="/collections/all" class="mobile-nav-link">ARCHIVE</a>
+        <a href="/pages/commission" class="mobile-nav-link">COMMISSION</a>
+        <a href="/pages/about" class="mobile-nav-link">MANIFESTO</a>
+        <a href="https://zeromalism.org" class="mobile-nav-link"
+           target="_blank" rel="noopener">
+          ZEROMALISM ↗
+        </a>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       All page templates render here
+  ============================================================ -->
+  <main id="main-content" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+
+      <p class="footer-brand">HAGSTONE.FR · NORMANDIE, FRANCE · EST. 1928</p>
+      <p class="footer-copy">© {{ 'now' | date: '%Y' }} — Artifacts of Deep Time</p>
+
+      <div class="footer-links">
+        <a href="https://www.instagram.com/hagstone.fr"
+           target="_blank"
+           rel="noopener"
+           class="footer-link"
+           aria-label="Hagstone on Instagram">
+          INSTAGRAM
+        </a>
+        <span class="footer-divider">·</span>
+        <a href="https://zeromalism.org"
+           target="_blank"
+           rel="noopener"
+           class="footer-link">
+          ZEROMALISM.ORG
+        </a>
+        <span class="footer-divider">·</span>
+        <a href="/pages/shipping" class="footer-link">SHIPPING</a>
+        <span class="footer-divider">·</span>
+        <a href="/policies/privacy-policy" class="footer-link">PRIVACY</a>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Leaflet.js — loaded at bottom for performance -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</body>
+</html>
